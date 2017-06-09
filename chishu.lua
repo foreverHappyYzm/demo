@@ -12,7 +12,7 @@ local db = ssdb.get_ssdb_db()
 --获取请求方法
 local method = ngx.req.get_method()
 --判断是否为get请求
-if method == "GET" then
+if method == ngx.HTTP_GET then
     --获取geturi
     local args = ngx.req.get_uri_args()
     --获取发帖信息
