@@ -16,16 +16,14 @@ local key = args.alarm                             --获取点赞人警号
 if args.action == "setpraise" then         --点赞
     local delCommentIdRes,err = ssdbMethod.zset_data(zname,key,time)   --插入数据
     if not delCommentIdRes then
-       utils.gcs_log("error", MODULE_NAME .. " zset commentid is faile, err: " .. err)   --日志
-       ngx.say(cjson.encode(errsT[7]))
+       ngx.say("err:",err)   --日志
        ngx.exit(200)
     end
     local setPraUser = args.postid .. "_praise"    --帖子id连接点赞字符串
     local getCount,err = ssdbMethod.zsize(setPraUser)  --返回元素的个数(知道点赞的次数)
     local getFans,err = ssdbMethod.zkeys(setPraUser,"","","",getCount)  --筛选列表  
     if not getFans then
-        utils.gcs_log("error", MODULE_NAME .. ", get zname size is faile, err: " .. err)   --错误日志
-        ngx.say(cjson.encode(errsT[7]))
+        ngxsay("error:",err)   --错误日志
         ngx.exit(200)
     end
     
@@ -47,14 +45,11 @@ if args.action == "setpraise" then         --点赞
             local sendRes, err  = commonUtils.sendMessage(setmsgT, v)
         end
     end
-    ngx.say(cjson.encode(errsT[8]))
-    ngx.exit(200)
 end
 if args.action == "delpraise" then    --取消点赞
     local delPraiseRes,err = ssdbMethod.zdel(zname,key)     --删除数据
     if not delPraiseRes then
-         utils.gcs_log("error", MODULE_NAME .. " zdel praise is faile, err: " .. err)    --日志
-         ngx.say(cjson.encode(errsT[7]))
+         ngx.say("error:",err)   --日志
          ngx.exit(200)
     end
 end
