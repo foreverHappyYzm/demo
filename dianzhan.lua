@@ -24,9 +24,9 @@ if args.action == "setpraise" then
        ngx.say("err:", err)   --日志
        ngx.exit(200)
     end
-    local setPraUser = args.postid .. "_praise" 
-    local getCount, err = ssdbMethod.zsize(setPraUser) 
-    local getFans, err = ssdbMethod.zkeys(setPraUser,"","","",getCount) 
+    
+    local getCount, err = ssdbMethod.zsize(zname) 
+    local getFans, err = ssdbMethod.zkeys(zname,"","","",getCount) 
     if not getFans then
         ngxsay("error:", err) 
         ngx.exit(200)
