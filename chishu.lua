@@ -10,15 +10,15 @@ local userInfo = ngx.shared.userinfo1
 --实质化对象
 local db = ssdb.get_ssdb_db()
 --获取请求方法
-local fangfa = ngx.req.get_method()
+local method = ngx.req.get_method()
 --判断是否为get请求
-if fangfa == "get" then
+if method == "GET" then
     --获取geturi
     local args = ngx.req.get_uri_args()
     --获取发帖信息
-    local neirong = db:get(args.postid)
+    local data = db:get(args.postid)
     --转换成表
-    local tb = cjson.decode(neirong)
+    local tb = cjson.decode(data)
     --判断操作人是否为发帖人
     if args.alarm ~= tb.alarm then
         --不是帖子浏览数加1
