@@ -1,18 +1,11 @@
-local ssdbMethod = require "gcs1.ssdb.method"
 local cjson = require "cjson.safe"
-local dbMethod = require "gcs1.db.method"
-local utils = require "gcs1.utils"
-local commonUtils   = require "gcs1.account.common_utils"
 local ssdb = require "gcs1.ssdb.utils"
-
 
 
 local config = ngx.shared.gcs_config1
 local userInfo = ngx.shared.userinfo1
 
-
 local db = ssdb.get_ssdb_db()
-
 
 local method = ngx.req.get_method()
 
