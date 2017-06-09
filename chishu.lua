@@ -16,7 +16,6 @@ end
 local args = ngx.req.get_uri_args()
 
 local data = db:get(args.postid)
-
 local tb = cjson.decode(data)
 if not tb then
     return ngx.exit(500)
@@ -29,8 +28,7 @@ end
 tb.read_count = tb.read_count + 1
 
 local str = cjson.encode(tb)
-
-local ok,err = db:set(str.postid,tb)
+local ok,err = db:set(str.postid,str)
 if not ok then
     ngx.say("failed to set postid:",err)
     return
