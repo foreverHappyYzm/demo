@@ -6,36 +6,41 @@ local commonUtils   = require "gcs1.account.common_utils"
 local ssdb = require "gcs1.ssdb.utils"
 
 
---共享内存
+
 local config = ngx.shared.gcs_config1
 local userInfo = ngx.shared.userinfo1
---实质化对象
+
+
 local db = ssdb.get_ssdb_db()
---获取请求方法
+
+
 local method = ngx.req.get_method()
---判断是否为get请求
+
 if method ~= ngx.HTTP_GET then
     return ngx.exit(403)
 end
---获取geturi
+
 local args = ngx.req.get_uri_args()
---获取发帖信息
+
 local data = db:get(args.postid)
---转换成表
+
 local tb = cjson.decode(data)
---判断操作人是否为发帖人
+if not tb then
+    return ngx.exit(500)
+end
+
 if args.alarm == tb.alarm then
     return
 end
---不是帖子浏览数加1
-tb.read_count = db:incr(tb.read_count,1)
---将新表转换成字符串形式
+
+tb.read_count = tb.read_count + 1
+
 local str = cjson.encode(tb)
---插入ssdb
+
 local ok,err = db:set(str.postid,tb)
 if not ok then
     ngx.say("failed to set postid:",err)
     return
 end
---关闭ssdb连接
+
 ssdb.close_ssdb_db()
