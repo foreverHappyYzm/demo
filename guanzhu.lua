@@ -20,17 +20,8 @@ if args.action == "setfocus" then
   local setres, err = ssdbMethod.zset_data(selfzname, focusedNum, time) 
   local setres, err = ssdbMethod.zset_data(fanszname, self, time)
 
-  local msgT = {}
-  msgT.sid = args.alarm
-  msgT.rid = focusedNum
-  msgT.data = "有人关注了你"
-  local gps = {}         
-  gps.H = "0"
-  gps.W = "0"
-  msgT.gps = gps
-  msgT.cmd = "4"
-  msgT.mtype = "9"
-  msgT.type = "G"
+  local msgT = {sid = args.alarm, rid = v, data = "有人点赞", gps={H = "0", W = "0"}, cmd = "4",
+                mtype = "8", type = "6"}
     
   local sendMessageT, msg_maxT = commonUtils.makeMessage(msgT)
   local setmsgT = commonUtils.setMessage(sendMessageT, msg_maxT[1], focusedNum)
