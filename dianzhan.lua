@@ -51,6 +51,7 @@ if args.action == "setpraise" then
         end
     end
 end
+
 if args.action == "delpraise" then  
     local delPraiseRes, err = ssdbMethod.zdel(zname,key)   
     if not delPraiseRes then
