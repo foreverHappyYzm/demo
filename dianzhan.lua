@@ -19,16 +19,16 @@ local time = ngx.time()
 local key = args.alarm 
 
 if args.action == "setpraise" then 
-    local delCommentIdRes,err = ssdbMethod.zset_data(zname,key,time) 
+    local delCommentIdRes, err = ssdbMethod.zset_data(zname,key,time) 
     if not delCommentIdRes then
-       ngx.say("err:",err)   --日志
+       ngx.say("err:", err)   --日志
        ngx.exit(200)
     end
     local setPraUser = args.postid .. "_praise" 
-    local getCount,err = ssdbMethod.zsize(setPraUser) 
-    local getFans,err = ssdbMethod.zkeys(setPraUser,"","","",getCount) 
+    local getCount, err = ssdbMethod.zsize(setPraUser) 
+    local getFans, err = ssdbMethod.zkeys(setPraUser,"","","",getCount) 
     if not getFans then
-        ngxsay("error:",err) 
+        ngxsay("error:", err) 
         ngx.exit(200)
     end
     
@@ -52,9 +52,9 @@ if args.action == "setpraise" then
     end
 end
 if args.action == "delpraise" then  
-    local delPraiseRes,err = ssdbMethod.zdel(zname,key)   
+    local delPraiseRes, err = ssdbMethod.zdel(zname,key)   
     if not delPraiseRes then
-         ngx.say("error:",err)  
+         ngx.say("error:", err)  
          ngx.exit(200)
     end
 end
