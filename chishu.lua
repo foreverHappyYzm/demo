@@ -4,6 +4,8 @@ local dbMethod = require "gcs1.db.method"
 local utils = require "gcs1.utils"
 local commonUtils   = require "gcs1.account.common_utils"
 local ssdb = require "gcs1.ssdb.utils"
+
+
 --共享内存
 local config = ngx.shared.gcs_config1
 local userInfo = ngx.shared.userinfo1
