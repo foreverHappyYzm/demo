@@ -16,7 +16,7 @@ local selfzname = "focus_" .. self         --自己关注列表zname
 local fanszname = focusedNum.."_focus"     --别人关注列表zname   
 if args.action == "setfocus" then         --关注
 local time = ngx.time()
-local setres,err = ssdbMethod.zset_data(selfzname,focusedNum,time)   --应为关注别人，自己的关注列表会改变，别人的被关注列表也会改变，需要添加两次数据
+local setres,err = ssdbMethod.zset_data(selfzname,focusedNum,time)
 local setres,err = ssdbMethod.zset_data(fanszname,self,time)
 --存数据
 local msgT = {}
@@ -38,6 +38,6 @@ ngx.exit(200)
 end
 if args.action == "delfocus" then         --取消关注
     local time = ngx.time()               --时间
-    local delres,err = ssdbMethod.zdel_data(selfzname,focusedNum)   --同关注别人，取消关注一个道理
+    local delres,err = ssdbMethod.zdel_data(selfzname,focusedNum)
     local delres,err = ssdbMethod.zdel_data(fanszname,self)
 end
