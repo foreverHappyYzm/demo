@@ -2,7 +2,7 @@ local method = ngx.req.get_method()
 
 local args
 if method == ngx.HTTP_GET then
-    args = ngx.req_get_uri_args()
+    args = ngx.req.get_uri_args()
 elseif method == ngx.HTTP_POST then
     ngx.req.read_body()
     args = ngx.req.get_post_args()
