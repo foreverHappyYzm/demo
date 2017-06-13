@@ -1,6 +1,6 @@
 local method = ngx.req.get_method()
-local args
 
+local args
 if method == ngx.HTTP_GET then
     args = ngx.req_get_uri_args()
 elseif method == ngx.HTTP_POST then
@@ -9,6 +9,13 @@ elseif method == ngx.HTTP_POST then
 else
 --boolean
 end
+
+if not args then
+    ngx.say("没有数据")
+    return ngx.exit(403)
+end
+
+local method = ngx.req.get_method()
 
 local k = args.k
 
