@@ -15,8 +15,6 @@ if not args then
     return ngx.exit(403)
 end
 
-local method = ngx.req.get_method()
-
 local k = args.k
 
 local t = args.t
