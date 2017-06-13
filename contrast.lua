@@ -16,7 +16,10 @@ local t = args.t
 
 local time = ngx.time()
 
-local md5 = ngx.md5("secred"..args.path..t) --args.path不知道是不是uri
+local http = ngx.var.host_name
+local path = ngx.var.request_uri
+local url = http..path
+local md5 = ngx.md5("secred"..url..t)
 
 if t < time then
     return ngx.exit(403)
