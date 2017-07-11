@@ -76,27 +76,27 @@ local function file_new_address(url)
 end
 
 local max = {}   --最后反馈给前端的信息集合
-local people_native
-local people_census
-local people_census_detail
-local people_present_address
-local profess_thief
-local team
-local case_count
-local active_area
-local team_status
-local case_type
-local capture_address
-local capture_unit
-local capture_department
-local handle_unit
-local handle_department
-local catch_time
-local catch_unit
-local modify_time
-local modify_unit
-local describe
-local people_whcd
+local people_native = ""
+local people_census = ""
+local people_census_detail = ""
+local people_present_address = ""
+local profess_thief = ""
+local team = ""
+local case_count = ""
+local active_area = ""
+local team_status = ""
+local case_type = ""
+local capture_address = ""
+local capture_unit = ""
+local capture_department = ""
+local handle_unit = ""
+local handle_department = ""
+local catch_time = ""
+local catch_unit = ""
+local modify_time = ""
+local modify_unit = ""
+local describe = ""
+local people_whcd = ""
 
 local args
 if ngx.req.get_method() == "GET" then
@@ -187,169 +187,55 @@ for _, v in pairs(content_tb) do
     else
        src = ""
     end
-
+        
     local fzrid = v.fzrId --详情查询字段
-    if not fzrid or fzrid == "" or fzrid == ngx.null then
-        people_native = ""
-        people_census = ""
-        people_census_detail = ""
-        people_present_address = ""
-        profess_thief = ""
-        team = ""
-        case_count = ""
-        active_area = ""
-        team_status = ""
-        case_type = ""
-        capture_address = ""
-        capture_unit = ""
-        capture_department = ""
-        handle_unit = ""
-        handle_department = ""
-        catch_time = ""
-        catch_unit = ""
-        modify_time = ""
-        modify_unit = ""
-        describe = ""
-        people_whcd = ""
-    else
-    
+    if fzrid and fzrid ~= "" or fzrid ~= ngx.null then
         local url = "http://100.17.3.26:8080/crimerepo/getCrimerDetailInfoByFzrIdForWZ?" .. ngx.encode_args({fzrId = fzrid})
         local res, err = webservice(url)   --调用http客户端函数
-        if not res or res.status ~= 200 then
-            people_native = ""
-            people_census = ""
-            people_census_detail = ""
-            people_present_address = ""
-            profess_thief = ""
-            team = ""
-            case_count = ""
-            active_area = ""
-            team_status = ""
-            case_type = ""
-            capture_address = ""
-            capture_unit = ""
-            capture_department = ""
-            handle_unit = ""
-            handle_department = ""
-            catch_time = ""
-            catch_unit = ""
-            modify_time = ""
-            modify_unit = ""
-            describe = ""
-            people_whcd = ""
-        else
-            local body, err = cjson.decode(res.body)
-            if not body or not next(body) then
-                people_native = ""
-                people_census = ""
-                people_census_detail = ""
-                people_present_address = ""
-                profess_thief = ""
-                team = ""
-                case_count = ""
-                active_area = ""
-                team_status = ""
-                case_type = ""
-                capture_address = ""
-                capture_unit = ""
-                capture_department = ""
-                handle_unit = ""
-                handle_department = ""
-                catch_time = ""
-                catch_unit = ""
-                modify_time = ""
-                modify_unit = ""
-                describe = ""
-                people_whcd = ""
-            else
-                local crimer = body.crimer  --crimer字段下包含详细信息
-                if next(crimer) then   --判断详细信息表是否为空
-                    local native = crimer.jg  --籍贯
-                    if not native or native == "" or native == ngx.null then --判读籍贯是否为空
-                        people_native = "未知"
-                    else
-                        local sql = "select REGION_NAME from tb_youbian where REGION_CODE ="..tonumber(native)
-                        local res, err = db_method.query(sql)   --连接数据库
-                        if not res then
-                            people_native = "未知"
-                        else
-                            people_native = res[1]["REGION_NAME"]
-                        end
+        if res and res.status == 200 and type(cjson.decode(res.body)) and next(cjson.decode(res.body)) then  --确定是否有响应体
+            local crimer = body.crimer  --crimer字段下包含详细信息
+            if type(crimer) and next(crimer) then   --判断详细信息表是否为空
+                local native = crimer.jg  --籍贯
+                if native and native ~= "" and native ~= ngx.null then
+                    local sql = "select REGION_NAME from tb_youbian where REGION_CODE ="..tonumber(native)
+                    local res, err = db_method.query(sql)   --连接数据库
+                    if res then
+                        people_native = res[1]["REGION_NAME"]
                     end
-                    
-                    local census = crimer.hjszdSh  --户籍
-                    if not census or census == "" or census == ngx.null then
-                        people_census = "未知"
-                    else
-                        local sql = "select REGION_NAME from tb_youbian where REGION_CODE ="..tonumber(census)
-                        local res, err = db_method.query(sql)
-                        if not res then
-                            people_census = "未知"
-                        else
-                            people_census = res[1]["REGION_NAME"]
-                        end
 
-                    end
-					
-					people_census_detail = crimer.hjszdXxdzh or ""
-	                people_present_address = crimer.xzhzhXxdzh or ""
-	                profess_thief = crimer.sfzhp or ""
-	                team = crimer.sshth or ""
-	                case_count = ""
-	                active_area = crimer.jchdqy or ""
-	                team_status = ""
-	                case_type = "扒窃"
-	                capture_address = ""
-	                capture_unit = ""
-	                capture_department = ""
-	                handle_unit = ""
-	                handle_department = ""
-	                catch_time = ""
-	                catch_unit = ""
-	                modify_time = ""
-	                modify_unit = ""
-	                describe = ""
-                    people_whcd = crimer.whchd or ""                    
-                else
-                    people_native = ""
-                    people_census = ""
-                    people_census_detail = ""
-                    people_present_address = ""
-                    profess_thief = ""
-                    team = ""
-                    case_count = ""
-                    active_area = ""
-                    team_status = ""
-                    case_type = ""
-                    capture_address = ""
-                    capture_unit = ""
-                    capture_department = ""
-                    handle_unit = ""
-                    handle_department = ""
-                    catch_time = ""
-                    catch_unit = ""
-                    modify_time = ""
-                    modify_unit = ""
-                    describe = ""
-                    people_whcd = ""
-                end            --判断详细表是否为空end
-            end   --判断响应体是否为空
-        end   --判断是否连接成功
-    end    --判断详情查询所需参数是否为空
+                end
     
-	table.insert(response, {
-                            casepeopleinfo =  {
-                                               people_name = xm, people_sex = sex, people_birth = birthday, people_card_number = car, 
-                                               people_nation = mz, people_native = people_native, people_census = people_census, people_census_detail = people_census_detail, 
+                local census = crimer.hjszdSh  --户籍
+                if census and census ~= "" and census ~= ngx.null then
+                    local sql = "select REGION_NAME from tb_youbian where REGION_CODE ="..tonumber(census)
+                    local res, err = db_method.query(sql)
+                    if res then
+                        people_census = res[1]["REGION_NAME"]
+                    end
+
+                end
+					
+			    people_census_detail = crimer.hjszdXxdzh or ""
+	            people_present_address = crimer.xzhzhXxdzh or ""
+	            profess_thief = crimer.sfzhp or ""
+	            team = crimer.sshth or ""
+	            active_area = crimer.jchdqy or ""
+                people_whcd = crimer.whchd or ""                    
+            end
+        end
+    end
+    
+	table.insert(response, {casepeopleinfo =  {people_name = xm, people_sex = sex, people_birth = birthday, people_card_number = car, 
+                                               people_nation = mz, people_native = people_native, people_census = people_census, 
+                                               people_census_detail = people_census_detail, 
                                                people_present_address = people_present_address,people_whcd = people_whcd
                                               }, 
-                            caseinfo = {
-                                        profess_thief = profess_thief, team = team, case_count = case_count, 
-                                        active_area = active_area, team_status = team_status, case_type = case_type, capture_address = capture_address, capture_unit = capture_unit,
+                            caseinfo = {profess_thief = profess_thief, team = team, case_count = case_count, 
+                                        active_area = active_area, team_status = team_status, case_type = case_type, 
+                                        capture_address = capture_address, capture_unit = capture_unit,
                                         capture_department = capture_department
                                        }, 
-                            more = {
-                                    handle_unit = handle_unit, handle_department = handle_department, catch_time = catch_time, 
+                            more = {handle_unit = handle_unit, handle_department = handle_department, catch_time = catch_time, 
                                     catch_unit = catch_unit, modify_time = modify_time, modify_unit = modify_unit, describe = describe
                                    }, 
                             pics ={src}
