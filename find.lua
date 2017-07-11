@@ -97,6 +97,7 @@ local modify_time = ""
 local modify_unit = ""
 local describe = ""
 local people_whcd = ""
+local src = ""
 
 local args
 if ngx.req.get_method() == "GET" then
@@ -122,7 +123,7 @@ local uri = "http://100.17.3.26:8080/crimerepo/queryCrimerByParamsForWZ?" .. can
 local res, err = webservice(uri)
 if not res or res.status ~= 200 then
     max.resultcode = 1000
-    max.resultmessage = "烽火接口调用失败"
+    max.resultmessage = "烽火接口调用失败"..err
     max.response = ""
     ngx.say(cjson.encode(max))
     ngx.exit(200)
@@ -172,24 +173,19 @@ for _, v in pairs(content_tb) do
     local src
     if next(photo_data_tb) then
         local fileid = photo_data_tb.fileId   --获取图片id码
-        if not fileid or fileid == "" or fileid == ngx.null then
-            src = ""
-        else
+        if fileid and fileid ~= "" and fileid ~= ngx.null then
             local url = "http://100.17.3.26:8080/crimerepo/queryCrimerByParamsForWZ.do?" .. ngx.encode_args({fileId = fileid})  
             local res, err = file_new_address(url)   --得到图片流并存储到tax
-            if not res or res == "" or res == ngx.null then
-                src = ""
-            else
+            if res and res ~= "" and res ~= ngx.null then
                 src = "http://113.57.174.98:13201/" .. res
             end
 
         end
-    else
-       src = ""
+
     end
         
     local fzrid = v.fzrId --详情查询字段
-    if fzrid and fzrid ~= "" or fzrid ~= ngx.null then
+    if fzrid and fzrid ~= "" and fzrid ~= ngx.null then
         local url = "http://100.17.3.26:8080/crimerepo/getCrimerDetailInfoByFzrIdForWZ?" .. ngx.encode_args({fzrId = fzrid})
         local res, err = webservice(url)   --调用http客户端函数
         if res and res.status == 200 and type(cjson.decode(res.body)) and next(cjson.decode(res.body)) then  --确定是否有响应体
